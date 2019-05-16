@@ -11,8 +11,8 @@ scale =
 
 
 transformCoords ( u, v ) =
-    ( (toFloat u - toFloat v * 0.5) * scale
-    , toFloat v * scale * sqrt 3 * 0.5
+    ( toFloat u * sqrt 3 * 0.5 * scale
+    , (toFloat v + toFloat u * 0.5) * scale
     )
 
 
@@ -39,7 +39,10 @@ viewLocation layout ( u, v ) =
     in
     Svg.g
         [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")" ]
-        [ Svg.circle
+        [ Svg.image
+            []
+            []
+        , Svg.circle
             [ r rad, fill colorString ]
             []
         , Svg.text_
@@ -50,5 +53,5 @@ viewLocation layout ( u, v ) =
 
 view layout =
     Svg.svg
-        [ viewBox "-200 -100 600 500", width "600", height "600" ]
+        [ viewBox "-300 -300 600 600", width "600", height "600" ]
         (List.map (viewLocation layout) layout.locations)
