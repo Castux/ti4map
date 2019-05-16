@@ -53,5 +53,5 @@ viewLocation layout ( u, v ) =
 
 view layout =
     Svg.svg
-        [ viewBox "-300 -300 600 600", width "600", height "600" ]
+        [ viewBox "-300 -300 600 600", width "100vmin", height "100vmin" ]
         (List.map (viewLocation layout) layout.locations)
