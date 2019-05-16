@@ -20,7 +20,28 @@ type alias Map =
 
 basicMap : Layout -> Map
 basicMap layout =
-    List.map2 Tuple.pair layout.locations Systems.systems
+    let
+        homes =
+            List.map (\loc -> ( loc, Systems.dummyHome )) layout.homes
+
+        mecatol =
+            Systems.findSystem 18
+                |> Maybe.withDefault Systems.dummyHome
+
+        emptySystem =
+            Systems.findSystem 50
+                |> Maybe.withDefault Systems.dummyHome
+
+        mecatolTile =
+            ( layout.mecatol, mecatol )
+
+        normal =
+            layout.locations
+                |> List.filter (\loc -> loc /= layout.mecatol && not (List.any ((==) loc) layout.homes))
+                --|> List.map (\loc -> ( loc, emptySystem ))
+                |> List.map2 (\a b -> ( b, a )) Systems.normalSystems
+    in
+    homes ++ [ mecatolTile ] ++ normal
 
 
 standardLayout : Layout

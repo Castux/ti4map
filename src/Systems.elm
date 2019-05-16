@@ -1,4 +1,4 @@
-module Systems exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), systems)
+module Systems exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), dummyHome, findSystem, normalSystems, systems)
 
 
 type Trait
@@ -41,6 +41,25 @@ type alias System =
     , wormhole : Maybe Wormhole
     , anomaly : Maybe Anomaly
     }
+
+
+dummyHome =
+    { number = 0
+    , planets = []
+    , wormhole = Nothing
+    , anomaly = Nothing
+    }
+
+
+findSystem i =
+    systems
+        |> List.filter (\sys -> sys.number == i)
+        |> List.head
+
+
+normalSystems =
+    systems
+        |> List.filter (\sys -> sys.number > 18)
 
 
 systems : List System
