@@ -12,7 +12,7 @@ type Message
 
 
 init =
-    Map.standardLayout
+    Map.basicMap Map.standardLayout
 
 
 update msg state =

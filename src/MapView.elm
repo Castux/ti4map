@@ -16,7 +16,7 @@ transformCoords ( u, v ) =
     )
 
 
-viewLocation layout ( u, v ) =
+viewTile ( ( u, v ), system ) =
     let
         ( px, py ) =
             transformCoords ( u, v )
@@ -27,16 +27,15 @@ viewLocation layout ( u, v ) =
         rad =
             String.fromFloat (toFloat scale / 2.0 - 1.0)
 
-        colorString =
-            if List.any ((==) ( u, v )) layout.homes then
-                "green"
-
-            else if ( u, v ) == layout.mecatol then
-                "gray"
-
-            else
-                "blue"
-
+        --        colorString =
+        --            if List.any ((==) ( u, v )) layout.homes then
+        --                "green"
+        --
+        --            else if ( u, v ) == layout.mecatol then
+        --                "gray"
+        --
+        --            else
+        --                "blue"
         overlap =
             1
 
@@ -49,7 +48,7 @@ viewLocation layout ( u, v ) =
     Svg.g
         [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")" ]
         [ Svg.image
-            [ xlinkHref "../img/tile40.png"
+            [ xlinkHref <| "../img/tile" ++ String.fromInt system.number ++ ".png"
             , width <| String.fromFloat imgWidth
             , height <| String.fromFloat imgHeight
             , x <| String.fromFloat (-imgWidth / 2)
@@ -71,7 +70,7 @@ viewLocation layout ( u, v ) =
 --        ]
 
 
-view layout =
+view map =
     Svg.svg
         [ viewBox "-250 -250 500 500", width "900", height "900" ]
-        (List.map (viewLocation layout) layout.locations)
+        (List.map viewTile map)
