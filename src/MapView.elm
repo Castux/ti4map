@@ -7,7 +7,7 @@ import Svg.Attributes exposing (cx, cy, fill, height, r, transform, viewBox, wid
 
 
 scale =
-    50
+    70
 
 
 transformCoords ( u, v ) =
@@ -16,7 +16,7 @@ transformCoords ( u, v ) =
     )
 
 
-viewLocation ( u, v ) =
+viewLocation layout ( u, v ) =
     let
         ( px, py ) =
             transformCoords ( u, v )
@@ -26,11 +26,21 @@ viewLocation ( u, v ) =
 
         rad =
             String.fromFloat (toFloat scale / 2.0 - 1.0)
+
+        colorString =
+            if List.any ((==) ( u, v )) layout.homes then
+                "green"
+
+            else if ( u, v ) == layout.mecatol then
+                "gray"
+
+            else
+                "blue"
     in
     Svg.g
         [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")" ]
         [ Svg.circle
-            [ r rad ]
+            [ r rad, fill colorString ]
             []
         , Svg.text_
             [ x "-10", y "5", fill "white" ]
@@ -40,5 +50,5 @@ viewLocation ( u, v ) =
 
 view layout =
     Svg.svg
-        [ viewBox "-100 -100 500 500", width "600", height "600" ]
-        (List.map viewLocation layout.locations)
+        [ viewBox "-200 -100 600 500", width "600", height "600" ]
+        (List.map (viewLocation layout) layout.locations)
