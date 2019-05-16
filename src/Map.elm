@@ -1,6 +1,6 @@
 module Map exposing (Layout, Location, basicMap, standardLayout)
 
-import Systems exposing (..)
+import Systems
 
 
 type alias Location =
@@ -15,13 +15,12 @@ type alias Layout =
 
 
 type alias Map =
-    List ( Location, System )
+    List ( Location, Systems.System )
 
 
 basicMap : Layout -> Map
 basicMap layout =
-    layout.locations
-        |> List.indexedMap (\i loc -> ( loc, { name = "Dummy", home = False, number = i + 1 } ))
+    List.map2 Tuple.pair layout.locations Systems.systems
 
 
 standardLayout : Layout
