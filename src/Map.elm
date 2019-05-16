@@ -1,4 +1,4 @@
-module Map exposing (Layout, Location, basicMap, standardLayout)
+module Map exposing (Layout, Location, makeBasicMap, standardLayout)
 
 import Systems
 
@@ -15,11 +15,13 @@ type alias Layout =
 
 
 type alias Map =
-    List ( Location, Systems.System )
+    { tiles : List ( Location, Systems.System )
+    , unusedSystems : List Systems.System
+    }
 
 
-basicMap : Layout -> Map
-basicMap layout =
+makeBasicMap : Layout -> Map
+makeBasicMap layout =
     let
         homes =
             List.map (\loc -> ( loc, Systems.dummyHome )) layout.homes
@@ -35,13 +37,22 @@ basicMap layout =
         mecatolTile =
             ( layout.mecatol, mecatol )
 
-        normal =
+        normalLocations =
             layout.locations
                 |> List.filter (\loc -> loc /= layout.mecatol && not (List.any ((==) loc) layout.homes))
-                --|> List.map (\loc -> ( loc, emptySystem ))
-                |> List.map2 (\a b -> ( b, a )) Systems.normalSystems
+
+        usedSystems =
+            List.take (List.length normalLocations) Systems.normalSystems
+
+        unusedSystems =
+            List.drop (List.length normalLocations) Systems.normalSystems
+
+        result =
+            List.map2 Tuple.pair normalLocations usedSystems
     in
-    homes ++ [ mecatolTile ] ++ normal
+    { tiles = homes ++ [ mecatolTile ] ++ result
+    , unusedSystems = unusedSystems
+    }
 
 
 standardLayout : Layout

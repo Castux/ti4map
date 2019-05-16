@@ -12,7 +12,7 @@ type Message
 
 
 init =
-    Map.basicMap Map.standardLayout
+    Map.makeBasicMap Map.standardLayout
 
 
 update msg state =
@@ -20,7 +20,7 @@ update msg state =
 
 
 view state =
-    MapView.view state
+    MapView.view state.tiles
 
 
 main =
