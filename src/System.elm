@@ -1,4 +1,4 @@
-module Systems exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), dummyHome, findSystem, normalSystems, systems)
+module System exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), dummyHome, findSystem, normalSystems, systems)
 
 
 type Trait
