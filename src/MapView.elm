@@ -1,4 +1,4 @@
-module MapView exposing (view)
+module MapView exposing (view, viewUnusedSystems)
 
 import Dict exposing (Dict)
 import Html
@@ -57,6 +57,39 @@ viewTile ( ( u, v ), system ) =
             ]
             []
         ]
+
+
+viewUnusedSystems systems =
+    let
+        imgWidth =
+            2 / sqrt 3 * scale
+
+        imgHeight =
+            toFloat <| scale + 3
+
+        w =
+            String.fromFloat <| imgWidth
+
+        h =
+            String.fromFloat <| toFloat (List.length systems) * imgHeight
+
+        images =
+            systems
+                |> List.indexedMap
+                    (\i sys ->
+                        Svg.image
+                            [ xlinkHref <| "../img/tile" ++ String.fromInt sys.number ++ ".png"
+                            , width <| String.fromFloat imgWidth
+                            , height <| String.fromFloat imgHeight
+                            , x <| "0"
+                            , y <| String.fromFloat (toFloat i * imgHeight)
+                            ]
+                            []
+                    )
+    in
+    Svg.svg
+        [ viewBox <| "0 0 " ++ w ++ " " ++ h, width "100" ]
+        images
 
 
 

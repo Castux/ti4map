@@ -20,7 +20,11 @@ update msg state =
 
 
 view state =
-    MapView.view state.tiles
+    Html.div
+        []
+        [ MapView.view state.tiles
+        , MapView.viewUnusedSystems state.unusedSystems
+        ]
 
 
 main =
