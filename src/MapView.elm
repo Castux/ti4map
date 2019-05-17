@@ -24,6 +24,7 @@ import Svg.Attributes
         , xlinkHref
         )
 import Svg.Events
+import System
 
 
 scale =
@@ -125,9 +126,18 @@ viewTile hover selected ownersFunc ( ( u, v ), system ) =
                 |> Maybe.withDefault []
 
         owners =
-            ownersFunc tile
-                |> List.map String.fromInt
-                |> String.join ","
+            case system of
+                Map.RegularSystem index ->
+                    if System.isBlocked index then
+                        ""
+
+                    else
+                        ownersFunc tile
+                            |> List.map String.fromInt
+                            |> String.join ","
+
+                Map.DummyHome index ->
+                    String.fromInt index
 
         ownersText =
             [ Svg.text_
