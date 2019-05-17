@@ -39,10 +39,10 @@ update msg state =
         Message.OnSystemClicked index ->
             case state.selected of
                 Just s ->
-                    { state | map = Map.swapTiles state.map s index, selected = Nothing }
+                    { state | map = Map.swapTiles state.map s index, selected = Nothing, hover = Nothing }
 
                 Nothing ->
-                    { state | selected = Just index }
+                    { state | selected = Just index, hover = Nothing }
 
 
 view : State -> Html.Html Message.Message
