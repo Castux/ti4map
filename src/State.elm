@@ -45,7 +45,7 @@ view state =
     Html.div
         []
         [ MapView.view state.map.tiles state.hover state.selected
-        , MapView.viewUnusedSystems state.map.unusedSystems
+        , MapView.viewUnusedSystems state.map.unusedSystems state.hover state.selected
         , Html.p []
             [ state.hover |> Maybe.map String.fromInt |> Maybe.withDefault "No hover" |> Html.text
             ]

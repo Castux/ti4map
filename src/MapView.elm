@@ -26,9 +26,6 @@ makeSystemImage index w h x y =
         , height <| String.fromFloat h
         , Svg.Attributes.x <| String.fromFloat x
         , Svg.Attributes.y <| String.fromFloat y
-        , Svg.Events.onMouseOver <| Message.OnSystemHover index
-        , Svg.Events.onMouseOut <| Message.OnSystemHoverOut
-        , Svg.Events.onClick <| Message.OnSystemClicked index
         ]
         []
 
@@ -98,33 +95,28 @@ viewTile hover selection ( ( u, v ), system ) =
                 ++ overlay
     in
     Svg.g
-        [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")" ]
+        [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")"
+        , Svg.Events.onMouseOver <| Message.OnSystemHover system.number
+        , Svg.Events.onMouseOut <| Message.OnSystemHoverOut
+        , Svg.Events.onClick <| Message.OnSystemClicked system.number
+        ]
         elements
 
 
-viewUnusedSystems systems =
+viewUnusedSystems systems hover selected =
     let
-        imgWidth =
-            2 / sqrt 3 * scale
-
-        imgHeight =
-            toFloat <| scale + 3
+        h =
+            scale * List.length systems |> String.fromInt
 
         w =
-            String.fromFloat <| imgWidth
-
-        h =
-            String.fromFloat <| toFloat (List.length systems) * imgHeight
+            scale |> String.fromInt
 
         images =
             systems
-                |> List.indexedMap
-                    (\i sys ->
-                        makeSystemImage sys.number imgWidth imgHeight 0 (toFloat i * imgHeight)
-                    )
+                |> List.indexedMap (\i sys -> viewTile hover selected ( ( 0, i ), sys ))
     in
     Svg.svg
-        [ viewBox <| "0 0 " ++ w ++ " " ++ h, width "100" ]
+        [ viewBox <| "-50 -35 100 " ++ h, width "100", height h ]
         images
 
 
