@@ -11,6 +11,8 @@ import Svg.Attributes
         , cy
         , fill
         , fillOpacity
+        , fontFamily
+        , fontSize
         , height
         , r
         , stroke
@@ -86,8 +88,11 @@ makeTileOverlay color =
         []
 
 
-viewTile hover selected neighbours ( ( u, v ), system ) =
+viewTile hover selected distances ( ( u, v ), system ) =
     let
+        tile =
+            ( ( u, v ), system )
+
         ( px, py ) =
             transformCoords ( u, v )
 
@@ -110,9 +115,6 @@ viewTile hover selected neighbours ( ( u, v ), system ) =
             else if Just system == hover then
                 Just "blue"
 
-            else if List.any ((==) ( u, v )) neighbours then
-                Just "orange"
-
             else
                 Nothing
 
@@ -122,9 +124,27 @@ viewTile hover selected neighbours ( ( u, v ), system ) =
                 |> Maybe.map List.singleton
                 |> Maybe.withDefault []
 
+        distance =
+            distances
+                |> List.filter (Tuple.first >> (==) tile)
+                |> List.map Tuple.second
+                |> List.head
+
+        distanceText =
+            case distance of
+                Just d ->
+                    [ Svg.text_
+                        [ fill "white", fontFamily "sans", fontSize "36" ]
+                        [ Svg.text <| String.fromInt d ]
+                    ]
+
+                _ ->
+                    []
+
         elements =
             [ makeSystemImage system imgWidth imgHeight (-imgWidth / 2) (-imgHeight / 2) ]
                 ++ overlay
+                ++ distanceText
     in
     Svg.g
         [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")"
@@ -160,15 +180,14 @@ view map hover selected =
                 |> List.map Tuple.first
                 |> List.head
 
-        neighbours =
+        distances =
             case ( hoverLoc, hover ) of
                 ( Just loc, Just index ) ->
-                    Map.getNeighbours map ( loc, index )
-                        |> List.map Tuple.first
+                    Map.getDistances map ( loc, index )
 
                 _ ->
                     []
     in
     Svg.svg
         [ viewBox "-250 -250 500 500", width "900", height "900" ]
-        (map |> List.map (viewTile hover selected neighbours))
+        (map |> List.map (viewTile hover selected distances))
