@@ -1,4 +1,4 @@
-module System exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), findSystem, getWormhole, normalSystems, systems)
+module System exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), findSystem, getWormhole, isBlocked, normalSystems, systems)
 
 
 type Trait
@@ -59,6 +59,18 @@ getWormhole : Int -> Maybe Wormhole
 getWormhole index =
     findSystem index
         |> Maybe.andThen .wormhole
+
+
+isBlocked index =
+    case findSystem index |> Maybe.andThen .anomaly of
+        Just AsteroidField ->
+            True
+
+        Just Supernova ->
+            True
+
+        _ ->
+            False
 
 
 systems : List System

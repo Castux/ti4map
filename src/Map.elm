@@ -1,4 +1,4 @@
-module Map exposing (Layout, Location, Map, SystemIndex(..), getDistances, getNeighbours, makeBasicMap, standardLayout, swapTiles)
+module Map exposing (Layout, Location, Map, SystemIndex(..), getNeighbours, getOwners, makeBasicMap, standardLayout, swapTiles)
 
 import Dict exposing (Dict)
 import System
@@ -202,9 +202,46 @@ getDistances tiles origin =
             [ origin ]
 
         candidates =
-            tiles |> List.filter ((/=) origin)
+            tiles
+                |> List.filter ((/=) origin)
+                |> List.filter
+                    (\( loc, index ) ->
+                        case index of
+                            RegularSystem i ->
+                                not (System.isBlocked i)
+
+                            _ ->
+                                True
+                    )
 
         acc =
             [ ( origin, 0 ) ]
     in
     floodFillStep currentTiles candidates acc 1
+
+
+getOwners map tile =
+    let
+        homes =
+            getDistances map tile
+                |> List.filterMap
+                    (\( t, dist ) ->
+                        case t of
+                            ( loc, DummyHome i ) ->
+                                Just ( i, dist )
+
+                            _ ->
+                                Nothing
+                    )
+
+        bestDistance =
+            homes
+                |> List.map Tuple.second
+                |> List.minimum
+
+        contestants =
+            homes
+                |> List.filter (Tuple.second >> Just >> (==) bestDistance)
+                |> List.map Tuple.first
+    in
+    contestants

@@ -88,7 +88,7 @@ makeTileOverlay color =
         []
 
 
-viewTile hover selected distances ( ( u, v ), system ) =
+viewTile hover selected ownersFunc ( ( u, v ), system ) =
     let
         tile =
             ( ( u, v ), system )
@@ -124,27 +124,21 @@ viewTile hover selected distances ( ( u, v ), system ) =
                 |> Maybe.map List.singleton
                 |> Maybe.withDefault []
 
-        distance =
-            distances
-                |> List.filter (Tuple.first >> (==) tile)
-                |> List.map Tuple.second
-                |> List.head
+        owners =
+            ownersFunc tile
+                |> List.map String.fromInt
+                |> String.join ","
 
-        distanceText =
-            case distance of
-                Just d ->
-                    [ Svg.text_
-                        [ fill "white", fontFamily "sans", fontSize "36" ]
-                        [ Svg.text <| String.fromInt d ]
-                    ]
-
-                _ ->
-                    []
+        ownersText =
+            [ Svg.text_
+                [ fill "white", fontFamily "sans", fontSize "12", Svg.Attributes.x "-10" ]
+                [ Svg.text <| owners ]
+            ]
 
         elements =
             [ makeSystemImage system imgWidth imgHeight (-imgWidth / 2) (-imgHeight / 2) ]
                 ++ overlay
-                ++ distanceText
+                ++ ownersText
     in
     Svg.g
         [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")"
@@ -165,7 +159,7 @@ viewUnusedSystems systems hover selected =
 
         images =
             systems
-                |> List.indexedMap (\i sys -> viewTile hover selected [] ( ( 0, i ), sys ))
+                |> List.indexedMap (\i sys -> viewTile hover selected (\t -> []) ( ( 0, i ), sys ))
     in
     Svg.svg
         [ viewBox <| "-50 -35 100 " ++ h, width "140", height "900" ]
@@ -179,15 +173,7 @@ view map hover selected =
                 |> List.filter (\( loc, index ) -> Just index == hover)
                 |> List.map Tuple.first
                 |> List.head
-
-        distances =
-            case ( hoverLoc, hover ) of
-                ( Just loc, Just index ) ->
-                    Map.getDistances map ( loc, index )
-
-                _ ->
-                    []
     in
     Svg.svg
         [ viewBox "-250 -250 500 500", width "900", height "900" ]
-        (map |> List.map (viewTile hover selected distances))
+        (map |> List.map (viewTile hover selected (Map.getOwners map)))
