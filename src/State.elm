@@ -40,10 +40,11 @@ update msg state =
             { state | selected = Just index }
 
 
+view : State -> Html.Html Message.Message
 view state =
     Html.div
         []
-        [ MapView.view state.map.tiles
+        [ MapView.view state.map.tiles state.hover state.selected
         , MapView.viewUnusedSystems state.map.unusedSystems
         , Html.p []
             [ state.hover |> Maybe.map String.fromInt |> Maybe.withDefault "No hover" |> Html.text

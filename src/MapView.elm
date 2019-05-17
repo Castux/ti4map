@@ -5,7 +5,7 @@ import Html
 import Map
 import Message
 import Svg
-import Svg.Attributes exposing (cx, cy, fill, fillOpacity, height, r, transform, viewBox, width, xlinkHref)
+import Svg.Attributes exposing (cx, cy, fill, fillOpacity, height, r, stroke, strokeWidth, transform, viewBox, width, xlinkHref)
 import Svg.Events
 
 
@@ -33,7 +33,34 @@ makeSystemImage index w h x y =
         []
 
 
-viewTile ( ( u, v ), system ) =
+makeTileOverlay color =
+    let
+        inset =
+            0.9
+
+        w =
+            2 / sqrt 3 * scale * inset
+
+        h =
+            1.0 * scale * inset
+
+        points =
+            [ ( w / 4, -h / 2 )
+            , ( w / 2, 0 )
+            , ( w / 4, h / 2 )
+            , ( -w / 4, h / 2 )
+            , ( -w / 2, 0 )
+            , ( -w / 4, -h / 2 )
+            ]
+                |> List.map (\( u, v ) -> String.fromFloat u ++ "," ++ String.fromFloat v)
+                |> String.join " "
+    in
+    Svg.polygon
+        [ Svg.Attributes.points points, fill "none", stroke color, strokeWidth "4" ]
+        []
+
+
+viewTile hover selection ( ( u, v ), system ) =
     let
         ( px, py ) =
             transformCoords ( u, v )
@@ -49,11 +76,30 @@ viewTile ( ( u, v ), system ) =
 
         imgHeight =
             scale + overlap
+
+        color =
+            if Just system.number == selection then
+                Just "red"
+
+            else if Just system.number == hover then
+                Just "blue"
+
+            else
+                Nothing
+
+        overlay =
+            color
+                |> Maybe.map makeTileOverlay
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+
+        elements =
+            [ makeSystemImage system.number imgWidth imgHeight (-imgWidth / 2) (-imgHeight / 2) ]
+                ++ overlay
     in
     Svg.g
         [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")" ]
-        [ makeSystemImage system.number imgWidth imgHeight (-imgWidth / 2) (-imgHeight / 2)
-        ]
+        elements
 
 
 viewUnusedSystems systems =
@@ -82,7 +128,7 @@ viewUnusedSystems systems =
         images
 
 
-view map =
+view map hover selection =
     Svg.svg
         [ viewBox "-250 -250 500 500", width "900", height "900" ]
-        (Dict.toList map |> List.map viewTile)
+        (Dict.toList map |> List.map (viewTile hover selection))
