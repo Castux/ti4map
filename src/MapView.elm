@@ -3,8 +3,10 @@ module MapView exposing (view, viewUnusedSystems)
 import Dict exposing (Dict)
 import Html
 import Map
+import Message
 import Svg
 import Svg.Attributes exposing (cx, cy, fill, fillOpacity, height, r, transform, viewBox, width, x, xlinkHref, y)
+import Svg.Events
 
 
 scale =
@@ -54,6 +56,8 @@ viewTile ( ( u, v ), system ) =
             , height <| String.fromFloat imgHeight
             , x <| String.fromFloat (-imgWidth / 2)
             , y <| String.fromFloat (-imgHeight / 2)
+            , Svg.Events.onMouseOver <| Message.OnHover system.number
+            , Svg.Events.onMouseOut <| Message.OnHoverOut
             ]
             []
         ]
@@ -83,6 +87,8 @@ viewUnusedSystems systems =
                             , height <| String.fromFloat imgHeight
                             , x <| "0"
                             , y <| String.fromFloat (toFloat i * imgHeight)
+                            , Svg.Events.onMouseOver <| Message.OnHover sys.number
+                            , Svg.Events.onMouseOut <| Message.OnHoverOut
                             ]
                             []
                     )

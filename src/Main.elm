@@ -1,35 +1,12 @@
-module Main exposing (init, main, update)
+module Main exposing (main)
 
 import Browser
-import Html
-import Html.Events
-import Map
-import MapView
-
-
-type Message
-    = Click
-
-
-init =
-    Map.makeBasicMap Map.standardLayout
-
-
-update msg state =
-    state
-
-
-view state =
-    Html.div
-        []
-        [ MapView.view state.tiles
-        , MapView.viewUnusedSystems state.unusedSystems
-        ]
+import State
 
 
 main =
     Browser.sandbox
-        { init = init
-        , update = update
-        , view = view
+        { init = State.init
+        , update = State.update
+        , view = State.view
         }

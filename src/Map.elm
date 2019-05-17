@@ -1,4 +1,4 @@
-module Map exposing (Layout, Location, makeBasicMap, standardLayout)
+module Map exposing (Layout, Location, Map, makeBasicMap, standardLayout)
 
 import Dict exposing (Dict)
 import System
