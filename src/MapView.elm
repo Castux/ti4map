@@ -86,7 +86,7 @@ makeTileOverlay color =
         []
 
 
-viewTile hover selected ( ( u, v ), system ) =
+viewTile hover selected neighbours ( ( u, v ), system ) =
     let
         ( px, py ) =
             transformCoords ( u, v )
@@ -109,6 +109,9 @@ viewTile hover selected ( ( u, v ), system ) =
 
             else if Just system == hover then
                 Just "blue"
+
+            else if List.any ((==) ( u, v )) neighbours then
+                Just "orange"
 
             else
                 Nothing
@@ -142,7 +145,7 @@ viewUnusedSystems systems hover selected =
 
         images =
             systems
-                |> List.indexedMap (\i sys -> viewTile hover selected ( ( 0, i ), sys ))
+                |> List.indexedMap (\i sys -> viewTile hover selected [] ( ( 0, i ), sys ))
     in
     Svg.svg
         [ viewBox <| "-50 -35 100 " ++ h, width "140", height "900" ]
@@ -150,6 +153,23 @@ viewUnusedSystems systems hover selected =
 
 
 view map hover selected =
+    let
+        selectedLoc =
+            map
+                |> List.filter (\( loc, index ) -> Just index == selected)
+                |> List.map Tuple.first
+                |> List.head
+
+        neighbours =
+            case selectedLoc of
+                Just loc ->
+                    map
+                        |> List.map Tuple.first
+                        |> List.filter (Map.areRawNeighbours loc)
+
+                Nothing ->
+                    []
+    in
     Svg.svg
         [ viewBox "-250 -250 500 500", width "900", height "900" ]
-        (map |> List.map (viewTile hover selected))
+        (map |> List.map (viewTile hover selected neighbours))

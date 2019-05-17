@@ -1,4 +1,4 @@
-module Map exposing (Layout, Location, Map, SystemIndex(..), makeBasicMap, standardLayout, swapTiles)
+module Map exposing (Layout, Location, Map, SystemIndex(..), areRawNeighbours, makeBasicMap, standardLayout, swapTiles)
 
 import Dict exposing (Dict)
 import System
@@ -127,3 +127,21 @@ swapTiles map index1 index2 =
     { tiles = newTiles
     , unusedSystems = newUnused
     }
+
+
+areRawNeighbours : Location -> Location -> Bool
+areRawNeighbours ( u, v ) ( x, y ) =
+    let
+        dx =
+            x - u
+
+        dy =
+            y - v
+
+        direct =
+            dx * dx + dy * dy == 1
+
+        indirect =
+            dx * dy == -1
+    in
+    direct || indirect
