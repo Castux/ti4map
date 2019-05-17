@@ -16,8 +16,8 @@ type alias Layout =
 
 
 type alias Map =
-    { tiles : Dict Location System.System
-    , unusedSystems : List System.System
+    { tiles : List ( Location, Int )
+    , unusedSystems : List Int
     }
 
 
@@ -25,18 +25,10 @@ makeBasicMap : Layout -> Map
 makeBasicMap layout =
     let
         homes =
-            List.map (\loc -> ( loc, System.dummyHome )) layout.homes
-
-        mecatol =
-            System.findSystem 18
-                |> Maybe.withDefault System.dummyHome
-
-        emptySystem =
-            System.findSystem 50
-                |> Maybe.withDefault System.dummyHome
+            List.indexedMap (\i loc -> ( loc, -i )) layout.homes
 
         mecatolTile =
-            ( layout.mecatol, mecatol )
+            ( layout.mecatol, 18 )
 
         normalLocations =
             layout.locations
@@ -52,7 +44,7 @@ makeBasicMap layout =
             List.map2 Tuple.pair normalLocations usedSystems
 
         result =
-            Dict.fromList <| homes ++ [ mecatolTile ] ++ normalTiles
+            homes ++ [ mecatolTile ] ++ normalTiles
     in
     { tiles = result
     , unusedSystems = unusedSystems
@@ -108,25 +100,18 @@ standardLayout =
 swapTiles : Map -> Int -> Int -> Map
 swapTiles map number1 number2 =
     let
-        system1 =
-            System.findSystem number1
-
-        system2 =
-            System.findSystem number2
-
         helper v =
-            Maybe.withDefault v <|
-                if v.number == number1 then
-                    system2
+            if v == number1 then
+                number2
 
-                else if v.number == number2 then
-                    system1
+            else if v == number2 then
+                number1
 
-                else
-                    Just v
+            else
+                v
 
         newTiles =
-            Dict.map (\k v -> helper v) map.tiles
+            List.map (\( loc, sys ) -> ( loc, helper sys )) map.tiles
 
         newUnused =
             List.map helper map.unusedSystems

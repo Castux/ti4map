@@ -36,7 +36,7 @@ transformCoords ( u, v ) =
 
 makeSystemImage index w h x y =
     Svg.image
-        [ xlinkHref <| "../img/tile" ++ String.fromInt index ++ ".png"
+        [ xlinkHref <| "../img/tile" ++ String.fromInt (max index 0) ++ ".png"
         , width <| String.fromFloat w
         , height <| String.fromFloat h
         , Svg.Attributes.x <| String.fromFloat x
@@ -95,10 +95,10 @@ viewTile hover selection ( ( u, v ), system ) =
             scale + overlap
 
         color =
-            if Just system.number == selection then
+            if Just system == selection then
                 Just "red"
 
-            else if Just system.number == hover then
+            else if Just system == hover then
                 Just "blue"
 
             else
@@ -111,14 +111,14 @@ viewTile hover selection ( ( u, v ), system ) =
                 |> Maybe.withDefault []
 
         elements =
-            [ makeSystemImage system.number imgWidth imgHeight (-imgWidth / 2) (-imgHeight / 2) ]
+            [ makeSystemImage system imgWidth imgHeight (-imgWidth / 2) (-imgHeight / 2) ]
                 ++ overlay
     in
     Svg.g
         [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")"
-        , Svg.Events.onMouseOver <| Message.OnSystemHover system.number
+        , Svg.Events.onMouseOver <| Message.OnSystemHover system
         , Svg.Events.onMouseOut <| Message.OnSystemHoverOut
-        , Svg.Events.onClick <| Message.OnSystemClicked system.number
+        , Svg.Events.onClick <| Message.OnSystemClicked system
         ]
         elements
 
@@ -143,4 +143,4 @@ viewUnusedSystems systems hover selected =
 view map hover selection =
     Svg.svg
         [ viewBox "-250 -250 500 500", width "900", height "900" ]
-        (Dict.toList map |> List.map (viewTile hover selection))
+        (map |> List.map (viewTile hover selection))

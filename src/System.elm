@@ -60,6 +60,7 @@ findSystem i =
 normalSystems =
     systems
         |> List.filter (\sys -> sys.number > 18)
+        |> List.map .number
 
 
 systems : List System
