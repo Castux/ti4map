@@ -5,7 +5,7 @@ import Html
 import Map
 import Message
 import Svg
-import Svg.Attributes exposing (cx, cy, fill, fillOpacity, height, r, transform, viewBox, width, x, xlinkHref, y)
+import Svg.Attributes exposing (cx, cy, fill, fillOpacity, height, r, transform, viewBox, width, xlinkHref)
 import Svg.Events
 
 
@@ -19,6 +19,19 @@ transformCoords ( u, v ) =
     )
 
 
+makeSystemImage index w h x y =
+    Svg.image
+        [ xlinkHref <| "../img/tile" ++ String.fromInt index ++ ".png"
+        , width <| String.fromFloat w
+        , height <| String.fromFloat h
+        , Svg.Attributes.x <| String.fromFloat x
+        , Svg.Attributes.y <| String.fromFloat y
+        , Svg.Events.onMouseOver <| Message.OnHover index
+        , Svg.Events.onMouseOut <| Message.OnHoverOut
+        ]
+        []
+
+
 viewTile ( ( u, v ), system ) =
     let
         ( px, py ) =
@@ -27,18 +40,6 @@ viewTile ( ( u, v ), system ) =
         ( sx, sy ) =
             ( String.fromFloat px, String.fromFloat py )
 
-        rad =
-            String.fromFloat (toFloat scale / 2.0 - 1.0)
-
-        --        colorString =
-        --            if List.any ((==) ( u, v )) layout.homes then
-        --                "green"
-        --
-        --            else if ( u, v ) == layout.mecatol then
-        --                "gray"
-        --
-        --            else
-        --                "blue"
         overlap =
             1
 
@@ -50,16 +51,7 @@ viewTile ( ( u, v ), system ) =
     in
     Svg.g
         [ transform <| "translate(" ++ sx ++ "," ++ sy ++ ")" ]
-        [ Svg.image
-            [ xlinkHref <| "../img/tile" ++ String.fromInt system.number ++ ".png"
-            , width <| String.fromFloat imgWidth
-            , height <| String.fromFloat imgHeight
-            , x <| String.fromFloat (-imgWidth / 2)
-            , y <| String.fromFloat (-imgHeight / 2)
-            , Svg.Events.onMouseOver <| Message.OnHover system.number
-            , Svg.Events.onMouseOut <| Message.OnHoverOut
-            ]
-            []
+        [ makeSystemImage system.number imgWidth imgHeight (-imgWidth / 2) (-imgHeight / 2)
         ]
 
 
@@ -81,33 +73,12 @@ viewUnusedSystems systems =
             systems
                 |> List.indexedMap
                     (\i sys ->
-                        Svg.image
-                            [ xlinkHref <| "../img/tile" ++ String.fromInt sys.number ++ ".png"
-                            , width <| String.fromFloat imgWidth
-                            , height <| String.fromFloat imgHeight
-                            , x <| "0"
-                            , y <| String.fromFloat (toFloat i * imgHeight)
-                            , Svg.Events.onMouseOver <| Message.OnHover sys.number
-                            , Svg.Events.onMouseOut <| Message.OnHoverOut
-                            ]
-                            []
+                        makeSystemImage sys.number imgWidth imgHeight 0 (toFloat i * imgHeight)
                     )
     in
     Svg.svg
         [ viewBox <| "0 0 " ++ w ++ " " ++ h, width "100" ]
         images
-
-
-
--- Svg.text_
---     [ x "-10", y "5", fill "white" ]
---     [ Svg.text <| String.fromInt u ++ "," ++ String.fromInt v ]
--- ]
---        , Svg.circle
---            [ r rad, fill colorString, fillOpacity "0.4" ]
---            []
---
---        ]
 
 
 view map =
