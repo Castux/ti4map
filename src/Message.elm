@@ -2,5 +2,6 @@ module Message exposing (Message(..))
 
 
 type Message
-    = OnHover Int
-    | OnHoverOut
+    = OnSystemHover Int
+    | OnSystemHoverOut
+    | OnSystemClicked Int

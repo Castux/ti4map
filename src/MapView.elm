@@ -26,8 +26,9 @@ makeSystemImage index w h x y =
         , height <| String.fromFloat h
         , Svg.Attributes.x <| String.fromFloat x
         , Svg.Attributes.y <| String.fromFloat y
-        , Svg.Events.onMouseOver <| Message.OnHover index
-        , Svg.Events.onMouseOut <| Message.OnHoverOut
+        , Svg.Events.onMouseOver <| Message.OnSystemHover index
+        , Svg.Events.onMouseOut <| Message.OnSystemHoverOut
+        , Svg.Events.onClick <| Message.OnSystemClicked index
         ]
         []
 
