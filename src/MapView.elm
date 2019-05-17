@@ -5,7 +5,22 @@ import Html
 import Map
 import Message
 import Svg
-import Svg.Attributes exposing (cx, cy, fill, fillOpacity, height, r, stroke, strokeWidth, transform, viewBox, width, xlinkHref)
+import Svg.Attributes
+    exposing
+        ( cx
+        , cy
+        , fill
+        , fillOpacity
+        , height
+        , r
+        , stroke
+        , strokeDasharray
+        , strokeWidth
+        , transform
+        , viewBox
+        , width
+        , xlinkHref
+        )
 import Svg.Events
 
 
@@ -53,7 +68,12 @@ makeTileOverlay color =
                 |> String.join " "
     in
     Svg.polygon
-        [ Svg.Attributes.points points, fill "none", stroke color, strokeWidth "4" ]
+        [ Svg.Attributes.points points
+        , fill "none"
+        , stroke color
+        , strokeWidth "4"
+        , strokeDasharray "15,10"
+        ]
         []
 
 
@@ -116,7 +136,7 @@ viewUnusedSystems systems hover selected =
                 |> List.indexedMap (\i sys -> viewTile hover selected ( ( 0, i ), sys ))
     in
     Svg.svg
-        [ viewBox <| "-50 -35 100 " ++ h, width "100", height h ]
+        [ viewBox <| "-50 -35 100 " ++ h, width "140", height "900" ]
         images
 
 
