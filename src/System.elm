@@ -1,4 +1,4 @@
-module System exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), findSystem, normalSystems, systems)
+module System exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), findSystem, getWormhole, normalSystems, systems)
 
 
 type Trait
@@ -53,6 +53,12 @@ normalSystems =
     systems
         |> List.filter (\sys -> sys.number > 18)
         |> List.map .number
+
+
+getWormhole : Int -> Maybe Wormhole
+getWormhole index =
+    findSystem index
+        |> Maybe.andThen .wormhole
 
 
 systems : List System

@@ -154,20 +154,20 @@ viewUnusedSystems systems hover selected =
 
 view map hover selected =
     let
-        selectedLoc =
+        hoverLoc =
             map
-                |> List.filter (\( loc, index ) -> Just index == selected)
+                |> List.filter (\( loc, index ) -> Just index == hover)
                 |> List.map Tuple.first
                 |> List.head
 
         neighbours =
-            case selectedLoc of
-                Just loc ->
+            case ( hoverLoc, hover ) of
+                ( Just loc, Just index ) ->
                     map
+                        |> List.filter (Map.areNeighbours ( loc, index ))
                         |> List.map Tuple.first
-                        |> List.filter (Map.areRawNeighbours loc)
 
-                Nothing ->
+                _ ->
                     []
     in
     Svg.svg

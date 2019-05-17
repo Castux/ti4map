@@ -1,4 +1,4 @@
-module Map exposing (Layout, Location, Map, SystemIndex(..), areRawNeighbours, makeBasicMap, standardLayout, swapTiles)
+module Map exposing (Layout, Location, Map, SystemIndex(..), areNeighbours, makeBasicMap, standardLayout, swapTiles)
 
 import Dict exposing (Dict)
 import System
@@ -20,8 +20,12 @@ type SystemIndex
     | RegularSystem Int
 
 
+type alias Tile =
+    ( Location, SystemIndex )
+
+
 type alias Map =
-    { tiles : List ( Location, SystemIndex )
+    { tiles : List Tile
     , unusedSystems : List SystemIndex
     }
 
@@ -145,3 +149,23 @@ areRawNeighbours ( u, v ) ( x, y ) =
             dx * dy == -1
     in
     direct || indirect
+
+
+areWormholeNeighbours index1 index2 =
+    case ( index1, index2 ) of
+        ( RegularSystem i, RegularSystem j ) ->
+            let
+                w1 =
+                    System.getWormhole i
+
+                w2 =
+                    System.getWormhole j
+            in
+            w1 /= Nothing && w1 == w2
+
+        _ ->
+            False
+
+
+areNeighbours ( loc1, index1 ) ( loc2, index2 ) =
+    areRawNeighbours loc1 loc2 || areWormholeNeighbours index1 index2
