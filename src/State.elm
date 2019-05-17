@@ -8,12 +8,13 @@ import System
 
 
 type alias State =
-    { hover : Maybe Int
-    , selected : Maybe Int
+    { hover : Maybe Map.SystemIndex
+    , selected : Maybe Map.SystemIndex
     , map : Map.Map
     }
 
 
+init : State
 init =
     { hover = Nothing
     , selected = Nothing
@@ -26,11 +27,12 @@ update msg state =
         Message.OnSystemHover index ->
             { state
                 | hover =
-                    if index > 0 then
-                        Just index
+                    case index of
+                        Map.RegularSystem i ->
+                            Just index
 
-                    else
-                        Nothing
+                        _ ->
+                            Nothing
             }
 
         Message.OnSystemHoverOut ->

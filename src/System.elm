@@ -1,4 +1,4 @@
-module System exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), dummyHome, findSystem, normalSystems, systems)
+module System exposing (Anomaly(..), Planet, System, Tech(..), Trait(..), Wormhole(..), findSystem, normalSystems, systems)
 
 
 type Trait
@@ -40,14 +40,6 @@ type alias System =
     , planets : List Planet
     , wormhole : Maybe Wormhole
     , anomaly : Maybe Anomaly
-    }
-
-
-dummyHome =
-    { number = 0
-    , planets = []
-    , wormhole = Nothing
-    , anomaly = Nothing
     }
 
 

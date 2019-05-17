@@ -1,4 +1,4 @@
-module Map exposing (Layout, Location, Map, makeBasicMap, standardLayout, swapTiles)
+module Map exposing (Layout, Location, Map, SystemIndex(..), makeBasicMap, standardLayout, swapTiles)
 
 import Dict exposing (Dict)
 import System
@@ -15,9 +15,14 @@ type alias Layout =
     }
 
 
+type SystemIndex
+    = DummyHome Int
+    | RegularSystem Int
+
+
 type alias Map =
-    { tiles : List ( Location, Int )
-    , unusedSystems : List Int
+    { tiles : List ( Location, SystemIndex )
+    , unusedSystems : List SystemIndex
     }
 
 
@@ -25,20 +30,23 @@ makeBasicMap : Layout -> Map
 makeBasicMap layout =
     let
         homes =
-            List.indexedMap (\i loc -> ( loc, -i )) layout.homes
+            List.indexedMap (\i loc -> ( loc, DummyHome i )) layout.homes
 
         mecatolTile =
-            ( layout.mecatol, 18 )
+            ( layout.mecatol, RegularSystem 18 )
 
         normalLocations =
             layout.locations
                 |> List.filter (\loc -> loc /= layout.mecatol && not (List.any ((==) loc) layout.homes))
 
+        regularSystems =
+            List.map RegularSystem System.normalSystems
+
         usedSystems =
-            List.take (List.length normalLocations) System.normalSystems
+            List.take (List.length normalLocations) regularSystems
 
         unusedSystems =
-            List.drop (List.length normalLocations) System.normalSystems
+            List.drop (List.length normalLocations) regularSystems
 
         normalTiles =
             List.map2 Tuple.pair normalLocations usedSystems
@@ -97,15 +105,15 @@ standardLayout =
     }
 
 
-swapTiles : Map -> Int -> Int -> Map
-swapTiles map number1 number2 =
+swapTiles : Map -> SystemIndex -> SystemIndex -> Map
+swapTiles map index1 index2 =
     let
         helper v =
-            if v == number1 then
-                number2
+            if v == index1 then
+                index2
 
-            else if v == number2 then
-                number1
+            else if v == index2 then
+                index1
 
             else
                 v

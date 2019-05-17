@@ -35,8 +35,17 @@ transformCoords ( u, v ) =
 
 
 makeSystemImage index w h x y =
+    let
+        pngIndex =
+            case index of
+                Map.DummyHome i ->
+                    0
+
+                Map.RegularSystem i ->
+                    i
+    in
     Svg.image
-        [ xlinkHref <| "../img/tile" ++ String.fromInt (max index 0) ++ ".png"
+        [ xlinkHref <| "../img/tile" ++ String.fromInt pngIndex ++ ".png"
         , width <| String.fromFloat w
         , height <| String.fromFloat h
         , Svg.Attributes.x <| String.fromFloat x
@@ -77,7 +86,7 @@ makeTileOverlay color =
         []
 
 
-viewTile hover selection ( ( u, v ), system ) =
+viewTile hover selected ( ( u, v ), system ) =
     let
         ( px, py ) =
             transformCoords ( u, v )
@@ -95,7 +104,7 @@ viewTile hover selection ( ( u, v ), system ) =
             scale + overlap
 
         color =
-            if Just system == selection then
+            if Just system == selected then
                 Just "red"
 
             else if Just system == hover then
@@ -140,7 +149,7 @@ viewUnusedSystems systems hover selected =
         images
 
 
-view map hover selection =
+view map hover selected =
     Svg.svg
         [ viewBox "-250 -250 500 500", width "900", height "900" ]
-        (map |> List.map (viewTile hover selection))
+        (map |> List.map (viewTile hover selected))

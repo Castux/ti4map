@@ -1,7 +1,9 @@
 module Message exposing (Message(..))
 
+import Map
+
 
 type Message
-    = OnSystemHover Int
+    = OnSystemHover Map.SystemIndex
     | OnSystemHoverOut
-    | OnSystemClicked Int
+    | OnSystemClicked Map.SystemIndex
