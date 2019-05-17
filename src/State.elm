@@ -22,18 +22,11 @@ init =
     }
 
 
+update : Message.Message -> State -> State
 update msg state =
     case msg of
         Message.OnSystemHover index ->
-            { state
-                | hover =
-                    case index of
-                        Map.RegularSystem i ->
-                            Just index
-
-                        _ ->
-                            Nothing
-            }
+            { state | hover = Just index }
 
         Message.OnSystemHoverOut ->
             { state | hover = Nothing }
