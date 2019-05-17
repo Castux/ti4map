@@ -1,4 +1,4 @@
-module Map exposing (Layout, Location, Map, makeBasicMap, standardLayout)
+module Map exposing (Layout, Location, Map, makeBasicMap, standardLayout, swapTiles)
 
 import Dict exposing (Dict)
 import System
@@ -102,4 +102,35 @@ standardLayout =
         ]
     , homes = [ ( 0, -3 ), ( 0, 3 ), ( 3, -3 ), ( -3, 3 ), ( -3, 0 ), ( 3, 0 ) ]
     , mecatol = ( 0, 0 )
+    }
+
+
+swapTiles : Map -> Int -> Int -> Map
+swapTiles map number1 number2 =
+    let
+        system1 =
+            System.findSystem number1
+
+        system2 =
+            System.findSystem number2
+
+        helper v =
+            Maybe.withDefault v <|
+                if v.number == number1 then
+                    system2
+
+                else if v.number == number2 then
+                    system1
+
+                else
+                    Just v
+
+        newTiles =
+            Dict.map (\k v -> helper v) map.tiles
+
+        newUnused =
+            List.map helper map.unusedSystems
+    in
+    { tiles = newTiles
+    , unusedSystems = newUnused
     }

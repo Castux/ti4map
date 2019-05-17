@@ -37,7 +37,12 @@ update msg state =
             { state | hover = Nothing }
 
         Message.OnSystemClicked index ->
-            { state | selected = Just index }
+            case state.selected of
+                Just s ->
+                    { state | map = Map.swapTiles state.map s index, selected = Nothing }
+
+                Nothing ->
+                    { state | selected = Just index }
 
 
 view : State -> Html.Html Message.Message
