@@ -1,5 +1,6 @@
 module MapView exposing (view)
 
+import Dict exposing (Dict)
 import Html
 import Map
 import Svg
@@ -73,4 +74,4 @@ viewTile ( ( u, v ), system ) =
 view map =
     Svg.svg
         [ viewBox "-250 -250 500 500", width "900", height "900" ]
-        (List.map viewTile map)
+        (Dict.toList map |> List.map viewTile)

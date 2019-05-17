@@ -1,5 +1,6 @@
 module Map exposing (Layout, Location, makeBasicMap, standardLayout)
 
+import Dict exposing (Dict)
 import System
 
 
@@ -15,7 +16,7 @@ type alias Layout =
 
 
 type alias Map =
-    { tiles : List ( Location, System.System )
+    { tiles : Dict Location System.System
     , unusedSystems : List System.System
     }
 
@@ -47,10 +48,13 @@ makeBasicMap layout =
         unusedSystems =
             List.drop (List.length normalLocations) System.normalSystems
 
-        result =
+        normalTiles =
             List.map2 Tuple.pair normalLocations usedSystems
+
+        result =
+            Dict.fromList <| homes ++ [ mecatolTile ] ++ normalTiles
     in
-    { tiles = homes ++ [ mecatolTile ] ++ result
+    { tiles = result
     , unusedSystems = unusedSystems
     }
 
