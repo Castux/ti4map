@@ -163,8 +163,7 @@ view map hover selected =
         neighbours =
             case ( hoverLoc, hover ) of
                 ( Just loc, Just index ) ->
-                    map
-                        |> List.filter (Map.areNeighbours ( loc, index ))
+                    Map.getNeighbours map ( loc, index )
                         |> List.map Tuple.first
 
                 _ ->

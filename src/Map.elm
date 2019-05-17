@@ -1,4 +1,4 @@
-module Map exposing (Layout, Location, Map, SystemIndex(..), areNeighbours, makeBasicMap, standardLayout, swapTiles)
+module Map exposing (Layout, Location, Map, SystemIndex(..), getDistances, getNeighbours, makeBasicMap, standardLayout, swapTiles)
 
 import Dict exposing (Dict)
 import System
@@ -169,3 +169,42 @@ areWormholeNeighbours index1 index2 =
 
 areNeighbours ( loc1, index1 ) ( loc2, index2 ) =
     areRawNeighbours loc1 loc2 || areWormholeNeighbours index1 index2
+
+
+getNeighbours map originTile =
+    map |> List.filter (areNeighbours originTile)
+
+
+floodFillStep currentTiles candidates acc depth =
+    let
+        ( next, rest ) =
+            candidates
+                |> List.partition (\c -> List.any (areNeighbours c) currentTiles)
+
+        distances =
+            next |> List.map (\tile -> ( tile, depth ))
+
+        nextAcc =
+            acc ++ distances
+    in
+    case rest of
+        [] ->
+            nextAcc
+
+        l ->
+            floodFillStep next rest nextAcc (depth + 1)
+
+
+getDistances : List Tile -> Tile -> List ( Tile, Int )
+getDistances tiles origin =
+    let
+        currentTiles =
+            [ origin ]
+
+        candidates =
+            tiles |> List.filter ((/=) origin)
+
+        acc =
+            [ ( origin, 0 ) ]
+    in
+    floodFillStep currentTiles candidates acc 1
